@@ -1,4 +1,6 @@
 ﻿using log4net;
+using Newtonsoft.Json;
+using PrintLabel.Models;
 using System;
 using System.Net;
 using System.Threading;
@@ -9,6 +11,7 @@ namespace PrintLabel.WcfService
     public class PrintService : IPrintService
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private const int _threadTimeout = 20000;
 
         HttpStatusCode IPrintService.Print(string errore, string text)
         {
@@ -23,7 +26,6 @@ namespace PrintLabel.WcfService
                 }
                 catch (Exception ex)
                 {
-                    log.Error(et.ToString());
                     log.Error(ex);
                 }
             });
@@ -31,7 +33,7 @@ namespace PrintLabel.WcfService
             Etichetta.SetApartmentState(ApartmentState.STA);
             Etichetta.Name = "ThreadLabel";
             Etichetta.Start();
-            Etichetta.Join(10000);
+            Etichetta.Join(_threadTimeout);
 
             if (et.Exception == string.Empty)
                 return HttpStatusCode.Created;
@@ -41,20 +43,20 @@ namespace PrintLabel.WcfService
                 return HttpStatusCode.NoContent;
         }
 
-        HttpStatusCode IPrintService.Print(NiceLabel_S label, bool copieScelte, int copyNumber)
+        HttpStatusCode IPrintService.Print(string labelJson, bool copieScelte, int copyNumber, string ipStampante)
         {
             EtichettaIgf et = null;
+            NiceLabel label = JsonConvert.DeserializeObject<NiceLabel>(labelJson);
             log.Info("Print(NiceLabel label, bool copieScelte, int copyNumber)");
 
             Thread Etichetta = new Thread(() =>
             {
                 try
                 {
-                    et = new EtichettaIgf(label, copieScelte, copyNumber);
+                    et = new EtichettaIgf(label, copieScelte, copyNumber, ipStampante);
                 }
                 catch (Exception ex)
                 {
-                    log.Error(et.ToString());
                     log.Error(ex);
                 }
             });
@@ -62,10 +64,7 @@ namespace PrintLabel.WcfService
             Etichetta.SetApartmentState(ApartmentState.STA);
             Etichetta.Name = "ThreadLabel";
             Etichetta.Start();
-            Etichetta.Join(20000);
-
-            if (et == null)
-                return HttpStatusCode.InternalServerError;
+            Etichetta.Join(_threadTimeout);
 
             if (et.Exception == string.Empty)
                 return HttpStatusCode.Created;
@@ -75,20 +74,20 @@ namespace PrintLabel.WcfService
                 return HttpStatusCode.NoContent;
         }
 
-        HttpStatusCode IPrintService.Print(NiceLabel_S label, bool copieScelte, bool ristampa, int copyNumber)
+        HttpStatusCode IPrintService.Print(string labelJson, bool copieScelte, bool ristampa, int copyNumber, string ipStampante)
         {
             EtichettaIgf et = null;
+            NiceLabel label = JsonConvert.DeserializeObject<NiceLabel>(labelJson);
             log.Info("Print(NiceLabel label, bool copieScelte, bool ristampa, int copyNumber)");
 
             Thread Etichetta = new Thread(() =>
             {
                 try
                 {
-                    et = new EtichettaIgf(label, copieScelte, ristampa, copyNumber);
+                    et = new EtichettaIgf(label, copieScelte, ristampa, copyNumber, ipStampante);
                 }
                 catch (Exception ex)
                 {
-                    log.Error(et.ToString());
                     log.Error(ex);
                 }
             });
@@ -96,7 +95,7 @@ namespace PrintLabel.WcfService
             Etichetta.SetApartmentState(ApartmentState.STA);
             Etichetta.Name = "ThreadLabel";
             Etichetta.Start();
-            Etichetta.Join(10000);
+            Etichetta.Join(_threadTimeout);
 
             if (et.Exception == string.Empty)
                 return HttpStatusCode.Created;

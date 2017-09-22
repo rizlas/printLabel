@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,34 +7,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Drawing.Printing;
 using log4net;
+using PrintLabel.Models;
 
 namespace PrintLabel
 {
-    /// <summary>
-    /// Logica di interazione per ucEtichettaIgf.xaml
-    /// </summary>
     public partial class EtichettaIgf : UserControl
     {
-        private string _sscc_code;
-        private string _reparto;
-
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
-        private iSysPrintEntities db = new iSysPrintEntities();
-        
-        private NiceLabel_S _label;
-        public NiceLabel_S Label
-        {
-            get
-            {
-                return _label;
-            }
-
-            set
-            {
-                _label = value;
-            }
-        }
 
         private string _exception = string.Empty;
         public string Exception
@@ -44,16 +22,12 @@ namespace PrintLabel
             {
                 return _exception;
             }
-
             set
             {
                 _exception = value;
             }
         }
-
-        private int _copyNumber = 1;        
-        private string _ipStampante = string.Empty;
-
+        
         public EtichettaIgf()
         {
             InitializeComponent();
@@ -73,169 +47,106 @@ namespace PrintLabel
             }
         }
 
-        public EtichettaIgf(NiceLabel_S label, bool copieScelte, bool ristampa, int copyNumber) : this()
+        public EtichettaIgf(NiceLabel label, bool copieScelte, bool ristampa, int copyNumber, string ipStampante) : this()
         {
-            _label = new NiceLabel_S();
-            _label.Bancale = label.Bancale;
-            _label.Commessa = label.Commessa;
-            //_label.Data = label.Data;
-            _label.DescLavorazione = label.DescLavorazione;
-            _label.Edizione = label.Edizione;
-            _label.IPPistola = label.IPPistola;
-            _label.Lavorazione = label.Lavorazione;
-            _label.Macchina = label.Macchina;
-            _label.Presenti = label.Presenti;
-            _label.QuantitaFatta = label.QuantitaFatta;
-            _label.QuantitaSuBancale = label.QuantitaSuBancale;
-            _label.Segnatura = label.Segnatura;
-            _label.sscc_code = label.sscc_code;
-            _label.Stato = label.Stato;
-            _label.Titolo = label.Titolo;
-
-            _copyNumber = copyNumber;
-
             if (copieScelte)
                 this.cSimboloCopieScelte.Visibility = Visibility.Visible;
 
-            if (_reparto == "AI")
+            string reparto = ImpostaReparto(label.Macchina);
+
+            if (reparto != "AI")
+                this.cSimbolo.Children.Add(CreaPoligono(reparto));
+            else
                 this.cSimbolo.Children.Add(CreaCerchio());
 
-            if (_label.Macchina.Contains("PI"))
-                GetPrinterAssociated();
+            this.cSimbolo.Children.Add(LabelReparto(reparto));
 
-            this.cSimbolo.Children.Add(CreaPoligono());
-            this.cSimbolo.Children.Add(LabelReparto());
-
-            this.lblID.Content = _label.ID;
-            this.tbBancale.Text = _label.Bancale.ToString();
-            this.tbCommessa.Text = _label.Commessa;
-            this.tbCopieBancale.Text = _label.QuantitaSuBancale.ToString();
-            this.tbEdizione.Text = _label.Edizione.ToString();
-            this.tbSegnatura.Text = _label.Segnatura;
-            this.tbMacchina.Text = _label.Macchina;
-            this.txtOperatori.Text = " " + _label.Presenti;
-            this.txtImpSegnatura.Text = " " + _label.DescLavorazione;
-            this.txtTitolo.Text = _label.Titolo;
-            this.barCodeCommessa.Code = _label.Commessa;
+            this.lblID.Content = label.ID;
+            this.tbBancale.Text = label.Bancale.ToString();
+            this.tbCommessa.Text = label.Commessa;
+            this.tbCopieBancale.Text = label.QuantitaSuBancale.ToString();
+            this.tbEdizione.Text = label.Edizione.ToString();
+            this.tbSegnatura.Text = label.Segnatura;
+            this.tbMacchina.Text = label.Macchina;
+            this.txtOperatori.Text = " " + label.Presenti;
+            this.txtImpSegnatura.Text = " " + label.DescLavorazione;
+            this.txtTitolo.Text = label.Titolo;
+            this.barCodeCommessa.Code = label.Commessa;
             this.qrCode.Code = ImpostaQRCode();
 
-            Print(this, _ipStampante != "" ? _ipStampante : _label.Macchina);
+            Print(this, ipStampante, copyNumber);
         }
 
-        public EtichettaIgf(NiceLabel_S label, bool copieScelte, int copyNumber) : this()
+        public EtichettaIgf(NiceLabel label, bool copieScelte, int copyNumber, string ipStampante) : this()
         {
-            _label = label;
-            _copyNumber = copyNumber;
-
             if (copieScelte)
                 this.cSimboloCopieScelte.Visibility = Visibility.Visible;
 
-            PRODUZIONE_S produzione = (from prod in db.PRODUZIONE_S
-                                     where prod.Macchina == _label.Macchina //"mPI01"
-                                     select prod).First();
+            string reparto = ImpostaReparto(label.Macchina);
 
-            this.SetStaticData(produzione);
-            this.CalcolaQuantita_E_NumeroBancale(produzione);
-            this.GetPresenti();
-            if(_label.Titolo == null)
-                this.GetTitolo();
-
-            if(_label.DescLavorazione == null || _label.DescLavorazione == string.Empty)
-                this.GetDescLavorazione();
-
-            this.GetID();
-
-            if (_label.Macchina.Contains("PI"))
-                GetPrinterAssociated();
-
-            this._sscc_code = _label.sscc_code;
-
-            ImpostaReparto();
-
-            if (_reparto == "AI")
+            if (reparto != "AI")
+                this.cSimbolo.Children.Add(CreaPoligono(reparto));
+            else
                 this.cSimbolo.Children.Add(CreaCerchio());
+            
+            this.cSimbolo.Children.Add(LabelReparto(reparto));
 
-            this.cSimbolo.Children.Add(CreaPoligono());
-            this.cSimbolo.Children.Add(LabelReparto());
-
-            this.lblID.Content = _label.ID;
+            this.lblID.Content = label.ID;
             //this.tbBancale.Text = _label.Bancale.ToString();      // Disabilitate in attesa di edizione e segnatura
-            this.tbCommessa.Text = _label.Commessa;
-            this.tbCopieBancale.Text = _label.QuantitaSuBancale.ToString();
+            this.tbCommessa.Text = label.Commessa;
+            this.tbCopieBancale.Text = label.QuantitaSuBancale.ToString();
             //this.tbEdizione.Text = _label.Edizione.ToString();    // Disabilitate in attesa di edizione e segnatura
-            this.tbMacchina.Text = _label.Macchina;
-            this.txtOperatori.Text = " " + _label.Presenti;
-            this.txtImpSegnatura.Text = " " + _label.DescLavorazione;
-            this.txtTitolo.Text = _label.Titolo;
-            this.barCodeCommessa.Code = $"(02){_label.Commessa}";
-            //this.lblBarCode.Content = $"(02){this.lblBarCode.Content}";
+            this.tbMacchina.Text = label.Macchina;
+            this.txtOperatori.Text = " " + label.Presenti;
+            this.txtImpSegnatura.Text = " " + label.DescLavorazione;
+            this.txtTitolo.Text = label.Titolo;
+            this.barCodeCommessa.Code = $"(02){label.Commessa}";
+            //this.lblBarCode.Content = $"(02){this.lblBarCode.Content}";   // Viene inserito in automatico
             this.qrCode.Code = ImpostaQRCode();
 
             string[] segnature = null;
 
-            if (_label.Segnatura.Contains("-"))
-                segnature = _label.Segnatura.Split('-');
+            if (label.Segnatura.Contains("-"))
+                segnature = label.Segnatura.Split('-');
 
             //if(segnature == null)     // Disabilitate in attesa di edizione e segnatura
             //    this.tbSegnatura.Text = _label.Segnatura.ToString();
 
-            _label.Data = DateTime.Now;
-
-            if (label.QuantitaSuBancale > 0)
+            if (segnature != null)
             {
-                if (segnature != null)
+                for (int i = 0; i < segnature.Length; i++)
                 {
-                    for (int i = 0; i < segnature.Length; i++)
-                    {
-                        _label.Segnatura = segnature[i];
-                        this.tbSegnatura.Text = _label.Segnatura.ToString();
-                        this.tbSegnatura.UpdateLayout();
+                    label.Segnatura = segnature[i];
+                    this.tbSegnatura.Text = label.Segnatura.ToString();
+                    this.tbSegnatura.UpdateLayout();
 
-                        PrintAndSave();
-                    }
-                }
-                else
-                {
-                    PrintAndSave();
+                    Print(this, ipStampante, copyNumber);
                 }
             }
             else
             {
-                _exception = $"Quantità su bancale pari a zero {this.ToString()}";
-                log.Error(_exception);
+                Print(this, ipStampante, copyNumber);
             }
-        }
-
-        private void PrintAndSave()
-        {
-            log.Info($"Ip Stampante {_ipStampante}");
-
-            Print(this, _ipStampante != "" ? _ipStampante : _label.Macchina);
-
-            db.NiceLabel_S1.Add(_label);
-            db.SaveChangesAsync();
         }
 
         private string ImpostaQRCode()
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append(_label.Commessa);
+            sb.Append(this.tbCommessa.Text);
             sb.Append("|");
-            sb.Append(_label.Macchina);
+            sb.Append(this.tbMacchina.Text);
             sb.Append("|");
-            sb.Append(_label.Presenti.Replace(", ", ";"));
+            sb.Append(this.txtOperatori.Text.Replace(", ", ";"));
             sb.Append("|");
-            sb.Append(_label.Bancale);
-            sb.Append("|");
-            sb.Append(_sscc_code);
+            sb.Append(this.tbBancale.Text);
 
             return sb.ToString();
         }
 
-        private void ImpostaReparto()
+        private string ImpostaReparto(string Macchina)
         {
-            string tmp = _label.Macchina;
+            string tmp = Macchina;
 
             if (tmp.Contains("PI"))
                 tmp = "mPI01";
@@ -244,62 +155,66 @@ namespace PrintLabel
             else if (tmp.Contains("RA"))
                 tmp = "mRA01";
 
+            string reparto = string.Empty;
+
             switch (tmp)
             {
                 case "mAI01":
-                    _reparto = "AI";
+                    reparto = "AI";
                     break;
                 case "mBR01":
                 case "mBR02":
-                    _reparto = "BR";
+                    reparto = "BR";
                     break;
                 case "mCA01":
-                    _reparto = "CO";
+                    reparto = "CO";
                     break;
                 case "mCA02":
-                    _reparto = "TT";
+                    reparto = "TT";
                     break;
                 case "mCA03":
-                    _reparto = "TC";
+                    reparto = "TC";
                     break;
                 case "mCA04":
-                    _reparto = "BR";
+                    reparto = "BR";
                     break;
                 case "mCA05":
-                    _reparto = "CA";
+                    reparto = "CA";
                     break;
                 case "mCA08":
-                    _reparto = "TR";
+                    reparto = "TR";
                     break;
                 case "mCU01":
-                    _reparto = "CU";
+                    reparto = "CU";
                     break;
                 case "mEX01":
-                    _reparto = "EX";
+                    reparto = "EX";
                     break;
                 case "mOL01":
-                    _reparto = "OL";
+                    reparto = "OL";
                     break;
                 case "mPI01":
-                    _reparto = "PI";
+                    reparto = "PI";
                     break;
                 case "mPM01":
-                    _reparto = "PM";
+                    reparto = "PM";
                     break;
                 case "mRA01":
-                    _reparto = "RA";
+                    reparto = "RA";
                     break;
                 case "mTA01":
-                    _reparto = "TA";
+                    reparto = "TA";
                     break;
             }
+
+            return reparto;
         }
 
-        private Label LabelReparto()
+        private Label LabelReparto(string reparto)
         {
             Label myLabel = new Label();
             myLabel.Name = "lblReparto";
-            myLabel.Content = _reparto;
+            myLabel.Content = reparto;
             myLabel.Foreground = new SolidColorBrush(Colors.White);
             myLabel.Height = 100;
             myLabel.Width = 100;
@@ -324,7 +239,7 @@ namespace PrintLabel
             return e;
         }
 
-        private Polygon CreaPoligono()
+        private Polygon CreaPoligono(string reparto)
         {
             Polygon poligono = new Polygon();
             poligono.Fill = Brushes.Black;
@@ -333,7 +248,7 @@ namespace PrintLabel
 
             PointCollection pc = null;
 
-            switch (_reparto)
+            switch (reparto)
             {
                 case "TA":
                     // Diamond
@@ -381,180 +296,8 @@ namespace PrintLabel
 
             return poligono;
         }
-        
-        private void SetStaticData(PRODUZIONE_S produzione)
-        {
-            _label.Macchina = produzione.Macchina;
-            _label.Commessa = produzione.Commessa;
-            _label.Lavorazione = (short)produzione.Lavorazione;
-            _label.Stato = produzione.Stato;
-            _label.QuantitaFatta = (int)produzione.QuantitàFatta;
-            //_label.Data = DateTimeOffset.Now;
 
-            if(_label.Segnatura == null)
-                _label.Segnatura = produzione.Segnatura.ToString();
-
-            if(_label.Edizione == null)
-                _label.Edizione = produzione.Edizione.ToString();
-        }
-
-        private void GetID()
-        {
-            var max = (from etichette in db.NiceLabel_S1
-                       select etichette.ID);
-
-            if (max.Count() > 0)
-                _label.ID = max.Max() + 1;
-            else
-                _label.ID = 1;
-        }
-
-        private void GetTitolo()
-        {
-            try
-            {
-                // Il titolo della commessa viene recuperato dalla tabella Prev 
-                // aggiungendo C. alla commessa che attualmente si trova in macchina
-
-                var query = (from commesse in db.Prev_S
-                             where commesse.Stato == "C." + _label.Commessa
-                             select new { commesse.Titolo });
-
-                if (query.Count() > 0)
-                    _label.Titolo = query.Single().Titolo;
-                else
-                    _label.Titolo = "ERRORE: From Prev where Stato = C. + _commessa -> Count = 0";
-            }
-            catch (Exception ex)
-            {
-                _exception = string.Format("{0:dd-MM-yyyy HH:mm:ss} - Exception: {1} - {2} \r\nStack trace: {3}", DateTime.Now, ex.Source.ToString(), ex.Message, ex.StackTrace);
-                log.Error(_exception);
-            }
-        }
-
-        private void GetPresenti()
-        {
-            try
-            {
-                // I presenti vengono semplicemente selezionati dalla vista creata nel database
-
-                var query = (from presenti in db.V_Presenti_S
-                             where presenti.macchina == _label.Macchina
-                             select new { presenti.presenti });
-
-                if (query.Count() > 0)
-                    _label.Presenti = query.Single().presenti;
-                else
-                {
-                    _label.Presenti = string.Format("Non ci sono operatori presenti sulla {0}", _label.Macchina);
-                    _exception = "ERRORE: From V_Presenti where macchina = _macchina->Count = 0";
-                    log.Info(_exception);
-                }
-            }
-            catch (Exception ex)
-            {
-                _exception = string.Format("{0:dd-MM-yyyy HH:mm:ss} - Exception: {1} - {2} \r\nStack trace: {3}", DateTime.Now, ex.Source.ToString(), ex.Message, ex.StackTrace);
-                log.Error(_exception);
-            }
-
-        }
-
-        private void GetDescLavorazione()
-        {
-            try
-            {
-                // La descrizione del lavoro viene selezionata dalla tabella Lavorazioni e può risultare solo un record 
-                // per quella commessa, fase e macchina
-
-                var query = (from lav in db.Lavorazioni_S
-                             where lav.Commessa == _label.Commessa &&
-                                   lav.Fase == _label.Lavorazione &&
-                                   lav.Macchina == _label.Macchina
-                             select new { lav.DescLavorazione });
-
-                if (query.Count() > 0)
-                    _label.DescLavorazione = query.Single().DescLavorazione;
-                else
-                    _label.DescLavorazione = "ERRORE: From Lavorazioni where commessa = _commessa AND Fase = _lavorazione AND Macchina = _macchina -> Count = 0";
-            }
-            catch (Exception ex)
-            {
-                _exception = string.Format("{0:dd-MM-yyyy HH:mm:ss} - Exception: {1} - {2} \r\nStack trace: {3}", DateTime.Now, ex.Source.ToString(), ex.Message, ex.StackTrace);
-                log.Error(_exception);
-            }
-        }
-
-        private void CalcolaQuantita_E_NumeroBancale(PRODUZIONE_S produzione)
-        {
-            try
-            {
-                // Trovo tutti i record salvati in NiceLabel che hanno stessa macchina e stessa commessa e stessa segnatura
-                // Se sono più di uno cerco l'ultimo altrimenti il primo bancale avrà come quantità 
-                // quella fatta dalla macchina al momento (qtaAtParziale = qtaAtTime)
-                // Vedi query produzione nel costruttore
-
-                // Trovo tutti i record salvati in NiceLabel che hanno stessa macchina e stessa commessa e stessa segnatura
-                // Se esiste almeno un record già salvato con stessa macchina, stessa commessa e stessa fase allora prendo 
-                // il suo numero di bancale e salvo quest'ultimo facendo + 1, altrimenti si tratta di primo bancale
-                // Controllo dello stato, perchè se l'ultimo bancale sparato ha come stato ES .... allora la quantità
-                // sulla macchina è stata azzerata (cambio segnature, ecc.)
-
-                //NO SSCC_CODE perchè la quantità sul terminale non si azzerra quando è terminato il bancale....
-                //Devo trovare un modo per cambiare sscc_code al cambio bancale, devono spararlo per forza
-                // && etichette.sscc_code == this._sscc_code
-                //Cambio segnatura sul terminale
-
-                var query = from etichette in db.NiceLabel_S1
-                            where etichette.Macchina == _label.Macchina &&
-                                  etichette.Commessa == _label.Commessa &&
-                                  etichette.Lavorazione == _label.Lavorazione &&
-                                  etichette.Segnatura == _label.Segnatura
-                            orderby etichette.Data descending
-                            select etichette;
-
-                int count = query.Count();
-
-                // Check stato
-
-                // 0 e non 1 perchè quando si spara l'etichetta il record non è ancora inserito, quindi se è il primo count risulterà 0
-                if (count > 0)
-                {
-                    NiceLabel_S record = query.First();
-                    if (_label.QuantitaFatta >= record.QuantitaSuBancale)// && record.Segnatura == _label.Segnatura)
-                    {
-                        _label.QuantitaSuBancale = (int)(_label.QuantitaFatta - record.QuantitaFatta);     // Se quantitaSuBancale = 0 chiedo di ristampare l'ultimo?
-                        _label.Bancale = (int)record.Bancale + 1;
-                    }
-                    else
-                    {
-                        //La segnatura è cambiata o la quantitàfatta è minore dell'ultimo (minore significa che è stato azzerato il counter per cambio edizione o altro)
-                        _label.QuantitaSuBancale = _label.QuantitaFatta;
-                        _label.Bancale = 1;     //Check
-                    }
-                }
-                else
-                {
-                    _label.QuantitaSuBancale = _label.QuantitaFatta;
-                    _label.Bancale = 1;
-                }
-            }
-            catch (Exception ex)
-            {
-                _exception = string.Format("{0:dd-MM-yyyy HH:mm:ss} - Exception: {1} - {2} \r\nStack trace: {3}", DateTime.Now, ex.Source.ToString(), ex.Message, ex.StackTrace);
-                log.Error(_exception);
-            }
-        }
-
-        private void GetPrinterAssociated()
-        {
-            Stampanti_NiceLabel_S sn = (from stampante in db.Stampanti_NiceLabel_S
-                                      where stampante.Ip_Pda == _label.IPPistola
-                                      select stampante).First();
-
-            this._ipStampante = sn.Ip_Stampante;
-        }
-
-        private void Print(EtichettaIgf et, string destinationPrinter)
+        private void Print(EtichettaIgf et, string destinationPrinter, int copyNumber)
         {
             PrintDialog printDlg = new PrintDialog();
 
@@ -572,25 +315,23 @@ namespace PrintLabel
 
                 System.Printing.PrintTicket pt = new System.Printing.PrintTicket();
                 pt.PageOrientation = System.Printing.PageOrientation.Portrait;
-                //pt.CopyCount = _copyNumber;
                 pt.PageMediaSize = new System.Printing.PageMediaSize(this.Width, this.Height);
                 pq.DefaultPrintTicket = pt;
                 
                 printDlg.PrintQueue = pq;
-                printDlg.PrintTicket.CopyCount = _copyNumber;
-                //System.Printing.PrintCapabilities pc = pq.GetPrintCapabilities(pt);
+                printDlg.PrintTicket.CopyCount = copyNumber;
                 
                 bool founded = true;
 
-                //for (int i = 0; i < PrinterSettings.InstalledPrinters.Count && !founded; i++)
-                //{
-                //    if (PrinterSettings.InstalledPrinters[i] == destinationPrinter)
-                //        founded = true;
-                //}
+                for (int i = 0; i < PrinterSettings.InstalledPrinters.Count && !founded; i++)
+                {
+                    if (PrinterSettings.InstalledPrinters[i] == destinationPrinter)
+                        founded = true;
+                }
 
                 if (founded)
                 {
-                    printDlg.PrintVisual(et, $"{_label.ID}-{_label.Commessa}-{_label.Macchina}");
+                    printDlg.PrintVisual(et, $"{this.lblID.Content}-{this.tbCommessa.Text}-{this.tbMacchina.Text}");
                 }
                 else
                 {
@@ -605,9 +346,9 @@ namespace PrintLabel
             }
         }
 
-        public override string ToString()
-        {
-            return string.Format("Macchina: {0} Commessa: {1} - Stato: {2} Segnatura: {3} QuantitaFatta: {4} QuantitaSuBancale: {5} Bancale: {6}", _label.Macchina, _label.Commessa, _label.Stato, _label.Segnatura, _label.QuantitaFatta, _label.QuantitaSuBancale, _label.Bancale);
-        }
+        //public override string ToString()
+        //{
+        //    return string.Format("Macchina: {0} Commessa: {1} - Stato: {2} Segnatura: {3} QuantitaFatta: {4} QuantitaSuBancale: {5} Bancale: {6}", _label.Macchina, _label.Commessa, _label.Stato, _label.Segnatura, _label.QuantitaFatta, _label.QuantitaSuBancale, _label.Bancale);
+        //}
     }
 }

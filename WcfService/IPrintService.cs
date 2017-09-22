@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Runtime.Serialization;
+﻿using System.Net;
 using System.ServiceModel;
-using System.Text;
 
 namespace PrintLabel.WcfService
 {
@@ -15,8 +10,8 @@ namespace PrintLabel.WcfService
         [OperationContract(Name = "PrintError")]
         HttpStatusCode Print(string errore, string text);
         [OperationContract(Name = "Print")]
-        HttpStatusCode Print(NiceLabel_S label, bool copieScelte, int copyNumber);
+        HttpStatusCode Print(string labelJson, bool copieScelte, int copyNumber, string ipStampante);
         [OperationContract(Name = "PrintIsReprint")]
-        HttpStatusCode Print(NiceLabel_S label, bool copieScelte, bool ristampa, int copyNumber);
+        HttpStatusCode Print(string labelJson, bool copieScelte, bool ristampa, int copyNumber, string ipStampante);
     }
 }
