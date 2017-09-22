@@ -20,9 +20,8 @@ namespace PrintLabel.Models
         public System.DateTimeOffset Data { get; set; }
         public Nullable<int> Bancale { get; set; }
         public string Presenti { get; set; }
-        public string Stato { get; set; }
         public string Edizione { get; set; }
-        public string IPPistola { get; set; }
-        public string sscc_code { get; set; }
+        public string IPLettore { get; set; }
+        public string IDPadre { get; set; }
     }
 }
