@@ -88,7 +88,7 @@ namespace PrintLabel
                 this.cSimbolo.Children.Add(CreaPoligono(reparto));
             else
                 this.cSimbolo.Children.Add(CreaCerchio());
-            
+
             this.cSimbolo.Children.Add(LabelReparto(reparto));
 
             this.lblID.Content = label.ID;
@@ -104,16 +104,13 @@ namespace PrintLabel
             //this.lblBarCode.Content = $"(02){this.lblBarCode.Content}";   // Viene inserito in automatico
             this.qrCode.Code = ImpostaQRCode();
 
-            string[] segnature = null;
-
-            if (label.Segnatura.Contains("-"))
-                segnature = label.Segnatura.Split('-');
-
             //if(segnature == null)     // Disabilitate in attesa di edizione e segnatura
             //    this.tbSegnatura.Text = _label.Segnatura.ToString();
 
-            if (segnature != null)
+            if (label.Segnatura.Contains("-"))
             {
+                string[] segnature = label.Segnatura.Split('-');
+
                 for (int i = 0; i < segnature.Length; i++)
                 {
                     label.Segnatura = segnature[i];
@@ -133,15 +130,23 @@ namespace PrintLabel
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append(this.tbCommessa.Text);
-            sb.Append("|");
-            sb.Append(this.tbMacchina.Text);
-            sb.Append("|");
-            sb.Append(this.txtOperatori.Text.Replace(", ", ";"));
-            sb.Append("|");
-            sb.Append(this.tbBancale.Text);
+            try
+            {
+                sb.Append(this.tbCommessa.Text);
+                sb.Append("|");
+                sb.Append(this.tbMacchina.Text);
+                sb.Append("|");
+                sb.Append(this.txtOperatori.Text);
+                sb.Append("|");
+                sb.Append(this.tbBancale.Text);
 
-            return sb.ToString();
+                return sb.ToString();
+            }
+            catch (Exception ex)
+            {
+                _exception = ex.Message;
+                return string.Empty;
+            }
         }
 
         private string ImpostaReparto(string Macchina)

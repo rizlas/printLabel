@@ -47,7 +47,8 @@ namespace PrintLabel.WcfService
         {
             EtichettaIgf et = null;
             NiceLabel label = JsonConvert.DeserializeObject<NiceLabel>(labelJson);
-            log.Info("Print(NiceLabel label, bool copieScelte, int copyNumber)");
+            log.Info("Print(string labelJson, bool copieScelte, int copyNumber, string ipStampante)");
+            log.Info($"IpStampante: {ipStampante}");
 
             Thread Etichetta = new Thread(() =>
             {
@@ -78,7 +79,8 @@ namespace PrintLabel.WcfService
         {
             EtichettaIgf et = null;
             NiceLabel label = JsonConvert.DeserializeObject<NiceLabel>(labelJson);
-            log.Info("Print(NiceLabel label, bool copieScelte, bool ristampa, int copyNumber)");
+            log.Info("Print(string labelJson, bool copieScelte, bool ristampa, int copyNumber, string ipStampante)");
+            log.Info($"IpStampante: {ipStampante}");
 
             Thread Etichetta = new Thread(() =>
             {
