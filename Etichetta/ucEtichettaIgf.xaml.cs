@@ -72,7 +72,7 @@ namespace PrintLabel
             this.txtImpSegnatura.Text = " " + label.DescLavorazione;
             this.txtTitolo.Text = label.Titolo;
             this.barCodeCommessa.Code = label.Commessa;
-            this.qrCode.Code = ImpostaQRCode();
+            //this.qrCode.Code = ImpostaQRCode();
 
             Print(this, ipStampante, copyNumber);
         }
@@ -102,7 +102,7 @@ namespace PrintLabel
             this.txtTitolo.Text = label.Titolo;
             this.barCodeCommessa.Code = $"(02){label.Commessa}";
             //this.lblBarCode.Content = $"(02){this.lblBarCode.Content}";   // Viene inserito in automatico
-            this.qrCode.Code = ImpostaQRCode();
+            //this.qrCode.Code = ImpostaQRCode();
 
             //if(segnature == null)     // Disabilitate in attesa di edizione e segnatura
             //    this.tbSegnatura.Text = _label.Segnatura.ToString();
