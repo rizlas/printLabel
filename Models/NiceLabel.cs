@@ -15,6 +15,7 @@ namespace PrintLabel.Models
         public int Lavorazione { get; set; }
         public string DescLavorazione { get; set; }
         public string Segnatura { get; set; }
+        public string Stato { get; set; }
         public Nullable<int> QuantitaFatta { get; set; }
         public Nullable<int> QuantitaSuBancale { get; set; }
         public System.DateTimeOffset Data { get; set; }

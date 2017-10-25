@@ -62,16 +62,32 @@ namespace PrintLabel
             this.cSimbolo.Children.Add(LabelReparto(reparto));
 
             this.lblID.Content = label.ID;
-            this.tbBancale.Text = label.Bancale.ToString();
             this.tbCommessa.Text = label.Commessa;
-            this.tbCopieBancale.Text = label.QuantitaSuBancale.ToString();
-            this.tbEdizione.Text = label.Edizione.ToString();
-            this.tbSegnatura.Text = label.Segnatura;
+
+            if (!copieScelte)
+            {
+                this.tbCopieBancale.Text = label.QuantitaSuBancale.ToString();
+                this.barCodeCommessa.Code = $"(02){label.Commessa}";
+                //this.tbBancale.Text = _label.Bancale.ToString();      // Disabilitate in attesa di edizione e segnatura
+            }
+            else
+            {
+                this.tbCopieBancale.Visibility = Visibility.Hidden;
+                this.lblCopieBancale.Visibility = Visibility.Hidden;
+
+                this.barCodeCommessa.Visibility = Visibility.Hidden;
+                this.lblBarCode.Visibility = Visibility.Hidden;
+
+                this.tbBancale.Visibility = Visibility.Hidden;
+                this.lblBancale.Visibility = Visibility.Hidden;
+            }
+
+            //this.tbEdizione.Text = label.Edizione.ToString();
+            //this.tbSegnatura.Text = label.Segnatura;
             this.tbMacchina.Text = label.Macchina;
             this.txtOperatori.Text = " " + label.Presenti;
             this.txtImpSegnatura.Text = " " + label.DescLavorazione;
             this.txtTitolo.Text = label.Titolo;
-            this.barCodeCommessa.Code = label.Commessa;
             //this.qrCode.Code = ImpostaQRCode();
 
             Print(this, ipStampante, copyNumber);
@@ -92,15 +108,32 @@ namespace PrintLabel
             this.cSimbolo.Children.Add(LabelReparto(reparto));
 
             this.lblID.Content = label.ID;
-            //this.tbBancale.Text = _label.Bancale.ToString();      // Disabilitate in attesa di edizione e segnatura
             this.tbCommessa.Text = label.Commessa;
-            this.tbCopieBancale.Text = label.QuantitaSuBancale.ToString();
+
+            if (!copieScelte)
+            {
+                this.tbCopieBancale.Text = label.QuantitaSuBancale.ToString();
+                this.barCodeCommessa.Code = $"(02){label.Commessa}";
+                //this.tbBancale.Text = _label.Bancale.ToString();      // Disabilitate in attesa di edizione e segnatura
+            }
+            else
+            {
+                this.tbCopieBancale.Visibility = Visibility.Hidden;
+                this.lblCopieBancale.Visibility = Visibility.Hidden;
+
+                this.barCodeCommessa.Visibility = Visibility.Hidden;
+                this.lblBarCode.Visibility = Visibility.Hidden;
+
+                this.tbBancale.Visibility = Visibility.Hidden;
+                this.lblBancale.Visibility = Visibility.Hidden;
+            }
+
             //this.tbEdizione.Text = _label.Edizione.ToString();    // Disabilitate in attesa di edizione e segnatura
             this.tbMacchina.Text = label.Macchina;
             this.txtOperatori.Text = " " + label.Presenti;
             this.txtImpSegnatura.Text = " " + label.DescLavorazione;
             this.txtTitolo.Text = label.Titolo;
-            this.barCodeCommessa.Code = $"(02){label.Commessa}";
+            
             //this.lblBarCode.Content = $"(02){this.lblBarCode.Content}";   // Viene inserito in automatico
             //this.qrCode.Code = ImpostaQRCode();
 
