@@ -86,8 +86,27 @@ namespace PrintLabel
             //this.tbSegnatura.Text = label.Segnatura;
             this.tbMacchina.Text = label.Macchina;
             this.txtOperatori.Text = " " + label.Presenti;
+
+            if (string.IsNullOrEmpty(label.DescLavorazione))
+            {
+                log.Info("DescLavorazione is null or empty");
+                label.DescLavorazione = ".";
+            }
+
             this.txtImpSegnatura.Text = " " + label.DescLavorazione;
-            this.txtTitolo.Text = label.Titolo;
+
+            //log.Info(this.ToString(label));
+
+            if (label.Titolo == null)
+            {
+                log.Info($"Titolo is null {label.Commessa} {label.Macchina} {label.Lavorazione}");
+            }
+            else
+            {
+                log.Info($"Titolo is possible null {label.Commessa} {label.Macchina} {label.Lavorazione}");
+                this.txtTitolo.Text = label.Titolo;
+            }
+
             //this.qrCode.Code = ImpostaQRCode();
 
             Print(this, ipStampante, copyNumber);
@@ -131,8 +150,26 @@ namespace PrintLabel
             //this.tbEdizione.Text = _label.Edizione.ToString();    // Disabilitate in attesa di edizione e segnatura
             this.tbMacchina.Text = label.Macchina;
             this.txtOperatori.Text = " " + label.Presenti;
+
+            if (string.IsNullOrEmpty(label.DescLavorazione))
+            {
+                log.Info("DescLavorazione is null or empty");
+                label.DescLavorazione = ".";
+            }
+
             this.txtImpSegnatura.Text = " " + label.DescLavorazione;
-            this.txtTitolo.Text = label.Titolo;
+
+            //log.Info(this.ToString(label));
+
+            if (label.Titolo == null)
+            {
+                log.Info($"Titolo is null {label.Commessa} {label.Macchina} {label.Lavorazione}");
+            }
+            else
+            {
+                log.Info($"Titolo is possible null {label.Commessa} {label.Macchina} {label.Lavorazione}");
+                this.txtTitolo.Text = label.Titolo;
+            }
             
             //this.lblBarCode.Content = $"(02){this.lblBarCode.Content}";   // Viene inserito in automatico
             //this.qrCode.Code = ImpostaQRCode();
@@ -157,6 +194,30 @@ namespace PrintLabel
             {
                 Print(this, ipStampante, copyNumber);
             }
+        }
+
+        private string ToString(NiceLabel label)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine();
+            sb.AppendLine($"Bancale {label.Bancale.ToString()}");
+            sb.AppendLine($"Commessa {label.Commessa.ToString()}");
+            sb.AppendLine($"Data {label.Data.ToString()}");
+            sb.AppendLine($"DescLavorazione {label.DescLavorazione.ToString()}");
+            sb.AppendLine($"Edizione {label.Edizione.ToString()}");
+            sb.AppendLine($"IPLettore {label.IPLettore.ToString()}");
+            sb.AppendLine($"Lavorazione {label.Lavorazione.ToString()}");
+            sb.AppendLine($"Macchina {label.Macchina.ToString()}");
+            sb.AppendLine($"Presenti {label.Presenti.ToString()}");
+            sb.AppendLine($"QuantitaFatta {label.QuantitaFatta.ToString()}");
+            sb.AppendLine($"QuantitaSuBancale {label.QuantitaSuBancale.ToString()}");
+            sb.AppendLine($"Segnatura {label.Segnatura.ToString()}");
+            sb.AppendLine($"Stato {label.Stato.ToString()}");
+            sb.AppendLine($"Titolo {label.Titolo.ToString()}");
+            sb.AppendLine();
+
+            return sb.ToString();
         }
 
         private string ImpostaQRCode()

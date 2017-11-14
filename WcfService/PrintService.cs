@@ -3,11 +3,13 @@ using Newtonsoft.Json;
 using PrintLabel.Models;
 using System;
 using System.Net;
+using System.ServiceModel;
 using System.Threading;
 
 namespace PrintLabel.WcfService
 {
     // NOTA: è possibile utilizzare il comando "Rinomina" del menu "Refactoring" per modificare il nome di classe "Service1" nel codice e nel file di configurazione contemporaneamente.
+    [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class PrintService : IPrintService
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -47,9 +49,11 @@ namespace PrintLabel.WcfService
         {
             EtichettaIgf et = null;
             NiceLabel label = JsonConvert.DeserializeObject<NiceLabel>(labelJson);
+            log.Info("");
             log.Info("Print(string labelJson, bool copieScelte, int copyNumber, string ipStampante)");
             ipStampante = ipStampante.Replace("\"", "");
             log.Info($"IpStampante: {ipStampante}");
+            log.Info($"Json: {labelJson}");
 
             Thread Etichetta = new Thread(() =>
             {
@@ -80,9 +84,11 @@ namespace PrintLabel.WcfService
         {
             EtichettaIgf et = null;
             NiceLabel label = JsonConvert.DeserializeObject<NiceLabel>(labelJson);
+            log.Info("");
             log.Info("Print(string labelJson, bool copieScelte, bool ristampa, int copyNumber, string ipStampante)");
             ipStampante = ipStampante.Replace("\"", "");
             log.Info($"IpStampante: {ipStampante}");
+            log.Info($"Json: {labelJson}");
 
             Thread Etichetta = new Thread(() =>
             {
