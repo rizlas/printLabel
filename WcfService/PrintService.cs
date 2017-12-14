@@ -45,7 +45,7 @@ namespace PrintLabel.WcfService
                 return HttpStatusCode.NoContent;
         }
 
-        HttpStatusCode IPrintService.Print(string labelJson, bool copieScelte, int copyNumber, string ipStampante)
+        HttpStatusCode IPrintService.Print(string labelJson, bool copieScelte, int copyNumber, string ipStampante, string tipologia)
         {
             EtichettaIgf et = null;
             NiceLabel label = JsonConvert.DeserializeObject<NiceLabel>(labelJson);
@@ -59,7 +59,7 @@ namespace PrintLabel.WcfService
             {
                 try
                 {
-                    et = new EtichettaIgf(label, copieScelte, copyNumber, ipStampante);
+                    et = new EtichettaIgf(label, copieScelte, copyNumber, ipStampante, tipologia);
                 }
                 catch (Exception ex)
                 {
@@ -80,7 +80,7 @@ namespace PrintLabel.WcfService
                 return HttpStatusCode.NoContent;
         }
 
-        HttpStatusCode IPrintService.Print(string labelJson, bool copieScelte, bool ristampa, int copyNumber, string ipStampante)
+        HttpStatusCode IPrintService.Print(string labelJson, bool copieScelte, bool ristampa, int copyNumber, string ipStampante, string tipologia)
         {
             EtichettaIgf et = null;
             NiceLabel label = JsonConvert.DeserializeObject<NiceLabel>(labelJson);
@@ -94,7 +94,7 @@ namespace PrintLabel.WcfService
             {
                 try
                 {
-                    et = new EtichettaIgf(label, copieScelte, ristampa, copyNumber, ipStampante);
+                    et = new EtichettaIgf(label, copieScelte, ristampa, copyNumber, ipStampante, tipologia);
                 }
                 catch (Exception ex)
                 {

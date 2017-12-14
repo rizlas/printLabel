@@ -73,6 +73,7 @@ namespace PrintLabel
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 log.Error(ex);
             }
 

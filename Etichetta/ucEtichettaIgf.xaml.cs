@@ -47,7 +47,7 @@ namespace PrintLabel
             }
         }
 
-        public EtichettaIgf(NiceLabel label, bool copieScelte, bool ristampa, int copyNumber, string ipStampante) : this()
+        public EtichettaIgf(NiceLabel label, bool copieScelte, bool ristampa, int copyNumber, string ipStampante, string tipologia) : this()
         {
             if (copieScelte)
                 this.cSimboloCopieScelte.Visibility = Visibility.Visible;
@@ -67,7 +67,7 @@ namespace PrintLabel
             if (!copieScelte)
             {
                 this.tbCopieBancale.Text = label.QuantitaSuBancale.ToString();
-                this.barCodeCommessa.Code = $"(02){label.Commessa}";
+                this.barCodeCommessa.Code = $"(02){label.Commessa}-{label.ID}";
                 //this.tbBancale.Text = _label.Bancale.ToString();      // Disabilitate in attesa di edizione e segnatura
             }
             else
@@ -89,7 +89,6 @@ namespace PrintLabel
 
             if (string.IsNullOrEmpty(label.DescLavorazione))
             {
-                log.Info("DescLavorazione is null or empty");
                 label.DescLavorazione = ".";
             }
 
@@ -103,16 +102,25 @@ namespace PrintLabel
             }
             else
             {
-                log.Info($"Titolo is possible null {label.Commessa} {label.Macchina} {label.Lavorazione}");
                 this.txtTitolo.Text = label.Titolo;
             }
 
+            if (label.Macchina.Contains("CU"))
+            {
+                gSegnatura.Visibility = Visibility.Hidden;
+                gTipologia.Visibility = Visibility.Visible;
+
+                tbTipologia.Text = tipologia;
+                this.tbTipologia.UpdateLayout();
+            }
+
+            this.lblBarCode.Content = $"{label.Commessa}-{label.ID}";
             //this.qrCode.Code = ImpostaQRCode();
 
             Print(this, ipStampante, copyNumber);
         }
 
-        public EtichettaIgf(NiceLabel label, bool copieScelte, int copyNumber, string ipStampante) : this()
+        public EtichettaIgf(NiceLabel label, bool copieScelte, int copyNumber, string ipStampante, string tipologia) : this()
         {
             if (copieScelte)
                 this.cSimboloCopieScelte.Visibility = Visibility.Visible;
@@ -132,7 +140,7 @@ namespace PrintLabel
             if (!copieScelte)
             {
                 this.tbCopieBancale.Text = label.QuantitaSuBancale.ToString();
-                this.barCodeCommessa.Code = $"(02){label.Commessa}";
+                this.barCodeCommessa.Code = $"(02){label.Commessa}-{label.ID}";
                 //this.tbBancale.Text = _label.Bancale.ToString();      // Disabilitate in attesa di edizione e segnatura
             }
             else
@@ -153,7 +161,6 @@ namespace PrintLabel
 
             if (string.IsNullOrEmpty(label.DescLavorazione))
             {
-                log.Info("DescLavorazione is null or empty");
                 label.DescLavorazione = ".";
             }
 
@@ -167,11 +174,19 @@ namespace PrintLabel
             }
             else
             {
-                log.Info($"Titolo is possible null {label.Commessa} {label.Macchina} {label.Lavorazione}");
                 this.txtTitolo.Text = label.Titolo;
             }
+
+            if(label.Macchina.Contains("CU"))
+            {
+                gSegnatura.Visibility = Visibility.Hidden;
+                gTipologia.Visibility = Visibility.Visible;
+
+                tbTipologia.Text = tipologia;
+                this.tbTipologia.UpdateLayout();
+            }
             
-            //this.lblBarCode.Content = $"(02){this.lblBarCode.Content}";   // Viene inserito in automatico
+            this.lblBarCode.Content = $"{label.Commessa}-{label.ID}";
             //this.qrCode.Code = ImpostaQRCode();
 
             //if(segnature == null)     // Disabilitate in attesa di edizione e segnatura

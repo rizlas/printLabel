@@ -10,8 +10,8 @@ namespace PrintLabel.WcfService
         [OperationContract(Name = "PrintError")]
         HttpStatusCode Print(string errore, string text);
         [OperationContract(Name = "Print")]
-        HttpStatusCode Print(string labelJson, bool copieScelte, int copyNumber, string ipStampante);
+        HttpStatusCode Print(string labelJson, bool copieScelte, int copyNumber, string ipStampante, string tipologia);
         [OperationContract(Name = "PrintIsReprint")]
-        HttpStatusCode Print(string labelJson, bool copieScelte, bool ristampa, int copyNumber, string ipStampante);
+        HttpStatusCode Print(string labelJson, bool copieScelte, bool ristampa, int copyNumber, string ipStampante, string tipologia);
     }
 }

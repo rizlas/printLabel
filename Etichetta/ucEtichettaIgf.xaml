@@ -18,7 +18,14 @@
             <Label x:Name="lblMacchina" Content="MACCHINA (CODICE):" HorizontalAlignment="Left" Margin="25,561,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="16" RenderTransformOrigin="0.59,2.257"/>
             <Label x:Name="lblOperatori" Content="OPERATORE/I:" HorizontalAlignment="Left" Margin="25,595,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="16"/>
             <Label x:Name="lblEdizione" Content="EDIZIONE:" HorizontalAlignment="Left" Margin="25,676,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="16"/>
-            <Label x:Name="lblSegnatura" Content="SEGNATURA NR:" HorizontalAlignment="Left" Margin="25,710,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="16"/>
+            <Grid x:Name="gSegnatura" Margin="0,0,-0.4,0.4">
+                <Label x:Name="lblSegnatura" Content="SEGNATURA NR:" HorizontalAlignment="Left" Margin="25,710,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="16"/>
+                <TextBlock x:Name="tbSegnatura" TextWrapping="Wrap" HorizontalAlignment="Right" Margin="0,706,20,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="25.333" FontWeight="Bold"><Run Text="_"/></TextBlock>
+            </Grid>
+            <Grid x:Name="gTipologia" Margin="0,0,-0.4,0.4" d:IsHidden="True">
+                <Label x:Name="lblTipologia" Content="TIPOLOGIA:" HorizontalAlignment="Left" Margin="25,710,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="16"/>
+                <TextBlock x:Name="tbTipologia" TextWrapping="Wrap" HorizontalAlignment="Right" Margin="0,706,20,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="25.333" FontWeight="Bold"><Run Text="_"/></TextBlock>
+            </Grid>
             <Label x:Name="lblImpSegnatura" Content="IMPOSTAZIONE LAV:" Margin="25,744,168.6,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="16"/>
             <Label x:Name="lblBancale" Content="BANCALE:" HorizontalAlignment="Left" Margin="25,823,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="16"/>
             <Label x:Name="lblCopieBancale" Content="COPIE SUL BANCALE:" HorizontalAlignment="Left" Margin="25,857,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="16"/>
@@ -26,14 +33,13 @@
             <TextBlock x:Name="tbMacchina" TextWrapping="Wrap" Margin="0,557,21.6,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="25.333" FontWeight="Bold" HorizontalAlignment="Right"><Run Text="mPI01"/></TextBlock>
             <TextBox x:Name="txtOperatori" HorizontalAlignment="Left" Height="45" Margin="25,629,0,0" TextWrapping="Wrap" Text=" 1234, 5678, 9012" VerticalAlignment="Top" Width="327" FontWeight="Bold" FontFamily="Arial" FontSize="13" BorderThickness="0"/>
             <TextBlock x:Name="tbEdizione" TextWrapping="Wrap" HorizontalAlignment="Right" Margin="0,672,20.6,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="25.333" FontWeight="Bold"><Run Text="_"/></TextBlock>
-            <TextBlock x:Name="tbSegnatura" TextWrapping="Wrap" HorizontalAlignment="Right" Margin="0,706,20.6,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="25.333" FontWeight="Bold"><Run Text="_"/></TextBlock>
             <TextBox x:Name="txtImpSegnatura" HorizontalAlignment="Left" Height="45" Margin="25,773,0,0" TextWrapping="Wrap" Text=" 1/4+1/745+1/63" VerticalAlignment="Top" Width="327" FontWeight="Bold" FontFamily="Arial" FontSize="13" BorderThickness="0"/>
             <TextBlock x:Name="tbBancale" TextWrapping="Wrap" HorizontalAlignment="Right" Margin="0,820,20.6,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="25.333" FontWeight="Bold"><Run Text="_"/></TextBlock>
             <TextBlock x:Name="tbCopieBancale" TextWrapping="Wrap" HorizontalAlignment="Right" Margin="0,853,20.6,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="25.333" FontWeight="Bold"><Run Text="9876"/></TextBlock>
             <TextBox x:Name="txtTitolo" HorizontalAlignment="Left" Height="91" Margin="25,891,0,0" TextWrapping="Wrap" Text="Best Of Quest - Best Of quest - Best Of Quest - Best Of Quest" VerticalAlignment="Top" Width="332" FontFamily="Arial" FontSize="16" BorderThickness="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderBrush="Black"/>
 
             <BarcodeWpf:BarcodeBlock x:Name="barCodeCommessa" Height="90" Margin="25,996,20.6,0" VerticalAlignment="Top" Code="1431-1.16" Scale="1"/>
-            <Label x:Name="lblBarCode" ContentStringFormat="(02){0}" Content="{Binding Text, ElementName=tbCommessa}" Margin="25,1086,0,24.4" FontFamily="Arial" FontWeight="Bold" VerticalAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Width="332"/>
+            <Label x:Name="lblBarCode" ContentStringFormat="(02){0}" Content="Lorem Ipsum" Margin="25,1086,0,24.4" FontFamily="Arial" FontWeight="Bold" VerticalAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Width="332"/>
 
             <BarcodeWpf:BarcodeBlock x:Name="qrCode" HorizontalAlignment="Left" Height="90" Margin="266,996,0,0" VerticalAlignment="Top" Width="90" Symbology="CodeQr" Code="1431-1.16|mPI01|1234;5678;9012|3|SSCCCODE" Visibility="Hidden"/>
             <Canvas x:Name="cSimboloCopieScelte" HorizontalAlignment="Left" Height="100" Margin="135,390,0,0" VerticalAlignment="Top" Width="100" Visibility="Hidden">
