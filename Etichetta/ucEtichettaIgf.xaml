@@ -13,8 +13,8 @@
         <Line Margin="25,496,24.6,618.4" StrokeThickness="3" Stroke="Black" X1="0" X2="360" />
 
         <Grid x:Name="gLabel">
-            <TextBlock TextWrapping="Wrap" x:Name="tbCommessa" Margin="0,522,22.6,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="25.333" FontWeight="Bold" HorizontalAlignment="Right" Text="(02)1431-1.16"/>
-            <Label x:Name="lblCommessa" Content="COMMESSA:" HorizontalAlignment="Left" Margin="25,526,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="16"/>
+            <TextBlock TextWrapping="Wrap" x:Name="tbCommessa" Margin="0,511,20.6,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="36" FontWeight="Bold" HorizontalAlignment="Right" Text="(02)1431-1.16"/>
+            <Label x:Name="lblCommessa" Content="COMMESSA:" HorizontalAlignment="Left" Margin="25,517,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="16"/>
             <Label x:Name="lblMacchina" Content="MACCHINA (CODICE):" HorizontalAlignment="Left" Margin="25,561,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="16" RenderTransformOrigin="0.59,2.257"/>
             <Label x:Name="lblOperatori" Content="OPERATORE/I:" HorizontalAlignment="Left" Margin="25,595,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="16"/>
             <Label x:Name="lblEdizione" Content="EDIZIONE:" HorizontalAlignment="Left" Margin="25,676,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="16"/>

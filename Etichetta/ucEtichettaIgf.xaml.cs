@@ -85,7 +85,7 @@ namespace PrintLabel
             //this.tbEdizione.Text = label.Edizione.ToString();
             //this.tbSegnatura.Text = label.Segnatura;
             this.tbMacchina.Text = label.Macchina;
-            this.txtOperatori.Text = " " + label.Presenti;
+            this.txtOperatori.Text = " " + label.Presenti.TrimEnd(',', ' ');
 
             if (string.IsNullOrEmpty(label.DescLavorazione))
             {
@@ -112,6 +112,12 @@ namespace PrintLabel
 
                 tbTipologia.Text = tipologia;
                 this.tbTipologia.UpdateLayout();
+            }
+            else
+            {
+                gSegnatura.Visibility = Visibility.Visible;
+                gTipologia.Visibility = Visibility.Hidden;
+                tbTipologia.Visibility = Visibility.Hidden;
             }
 
             this.lblBarCode.Content = $"{label.Commessa}-{label.ID}";
@@ -157,7 +163,7 @@ namespace PrintLabel
 
             //this.tbEdizione.Text = _label.Edizione.ToString();    // Disabilitate in attesa di edizione e segnatura
             this.tbMacchina.Text = label.Macchina;
-            this.txtOperatori.Text = " " + label.Presenti;
+            this.txtOperatori.Text = " " + label.Presenti.TrimEnd(',', ' '); ;
 
             if (string.IsNullOrEmpty(label.DescLavorazione))
             {
@@ -177,7 +183,7 @@ namespace PrintLabel
                 this.txtTitolo.Text = label.Titolo;
             }
 
-            if(label.Macchina.Contains("CU"))
+            if (label.Macchina.Contains("CU"))
             {
                 gSegnatura.Visibility = Visibility.Hidden;
                 gTipologia.Visibility = Visibility.Visible;
@@ -185,7 +191,13 @@ namespace PrintLabel
                 tbTipologia.Text = tipologia;
                 this.tbTipologia.UpdateLayout();
             }
-            
+            else
+            {
+                gSegnatura.Visibility = Visibility.Visible;
+                gTipologia.Visibility = Visibility.Hidden;
+                tbTipologia.Visibility = Visibility.Hidden;
+            }
+
             this.lblBarCode.Content = $"{label.Commessa}-{label.ID}";
             //this.qrCode.Code = ImpostaQRCode();
 
@@ -459,10 +471,5 @@ namespace PrintLabel
                 log.Error(_exception);
             }
         }
-
-        //public override string ToString()
-        //{
-        //    return string.Format("Macchina: {0} Commessa: {1} - Stato: {2} Segnatura: {3} QuantitaFatta: {4} QuantitaSuBancale: {5} Bancale: {6}", _label.Macchina, _label.Commessa, _label.Stato, _label.Segnatura, _label.QuantitaFatta, _label.QuantitaSuBancale, _label.Bancale);
-        //}
     }
 }
