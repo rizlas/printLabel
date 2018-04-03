@@ -94,7 +94,7 @@ namespace PrintLabel.WcfService
             {
                 try
                 {
-                    et = new EtichettaIgf(label, copieScelte, ristampa, copyNumber, ipStampante, tipologia);
+                    et = new EtichettaIgf(label, copieScelte, copyNumber, ipStampante, tipologia);
                 }
                 catch (Exception ex)
                 {

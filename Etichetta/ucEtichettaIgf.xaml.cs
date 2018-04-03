@@ -46,86 +46,7 @@ namespace PrintLabel
                 // Introdurre print se serve                
             }
         }
-
-        public EtichettaIgf(NiceLabel label, bool copieScelte, bool ristampa, int copyNumber, string ipStampante, string tipologia) : this()
-        {
-            if (copieScelte)
-                this.cSimboloCopieScelte.Visibility = Visibility.Visible;
-
-            string reparto = ImpostaReparto(label.Macchina);
-
-            if (reparto != "AI")
-                this.cSimbolo.Children.Add(CreaPoligono(reparto));
-            else
-                this.cSimbolo.Children.Add(CreaCerchio());
-
-            this.cSimbolo.Children.Add(LabelReparto(reparto));
-
-            this.lblID.Content = label.ID;
-            this.tbCommessa.Text = label.Commessa;
-
-            if (!copieScelte)
-            {
-                this.tbCopieBancale.Text = label.QuantitaSuBancale.ToString();
-                this.barCodeCommessa.Code = $"(02){label.Commessa}-{label.ID}";
-                //this.tbBancale.Text = _label.Bancale.ToString();      // Disabilitate in attesa di edizione e segnatura
-            }
-            else
-            {
-                this.tbCopieBancale.Visibility = Visibility.Hidden;
-                this.lblCopieBancale.Visibility = Visibility.Hidden;
-
-                this.barCodeCommessa.Visibility = Visibility.Hidden;
-                this.lblBarCode.Visibility = Visibility.Hidden;
-
-                this.tbBancale.Visibility = Visibility.Hidden;
-                this.lblBancale.Visibility = Visibility.Hidden;
-            }
-
-            //this.tbEdizione.Text = label.Edizione.ToString();
-            //this.tbSegnatura.Text = label.Segnatura;
-            this.tbMacchina.Text = label.Macchina;
-            this.txtOperatori.Text = " " + label.Presenti.TrimEnd(',', ' ');
-
-            if (string.IsNullOrEmpty(label.DescLavorazione))
-            {
-                label.DescLavorazione = ".";
-            }
-
-            this.txtImpSegnatura.Text = " " + label.DescLavorazione;
-
-            //log.Info(this.ToString(label));
-
-            if (label.Titolo == null)
-            {
-                log.Info($"Titolo is null {label.Commessa} {label.Macchina} {label.Lavorazione}");
-            }
-            else
-            {
-                this.txtTitolo.Text = label.Titolo;
-            }
-
-            if (label.Macchina.Contains("CU"))
-            {
-                gSegnatura.Visibility = Visibility.Hidden;
-                gTipologia.Visibility = Visibility.Visible;
-
-                tbTipologia.Text = tipologia;
-                this.tbTipologia.UpdateLayout();
-            }
-            else
-            {
-                gSegnatura.Visibility = Visibility.Visible;
-                gTipologia.Visibility = Visibility.Hidden;
-                tbTipologia.Visibility = Visibility.Hidden;
-            }
-
-            this.lblBarCode.Content = $"{label.Commessa}-{label.ID}";
-            //this.qrCode.Code = ImpostaQRCode();
-
-            Print(this, ipStampante, copyNumber);
-        }
-
+        
         public EtichettaIgf(NiceLabel label, bool copieScelte, int copyNumber, string ipStampante, string tipologia) : this()
         {
             if (copieScelte)
@@ -161,9 +82,9 @@ namespace PrintLabel
                 this.lblBancale.Visibility = Visibility.Hidden;
             }
 
-            //this.tbEdizione.Text = _label.Edizione.ToString();    // Disabilitate in attesa di edizione e segnatura
+            this.tbEdizione.Text = label.Edizione.ToString().ToUpper();
             this.tbMacchina.Text = label.Macchina;
-            this.txtOperatori.Text = " " + label.Presenti.TrimEnd(',', ' '); ;
+            this.txtOperatori.Text = " " + label.Presenti.TrimEnd(',', ' ');
 
             if (string.IsNullOrEmpty(label.DescLavorazione))
             {
@@ -180,7 +101,7 @@ namespace PrintLabel
             }
             else
             {
-                this.txtTitolo.Text = label.Titolo;
+                this.txtTitolo.Text = label.Titolo.ToUpper();
             }
 
             if (label.Macchina.Contains("CU"))
@@ -201,26 +122,7 @@ namespace PrintLabel
             this.lblBarCode.Content = $"{label.Commessa}-{label.ID}";
             //this.qrCode.Code = ImpostaQRCode();
 
-            //if(segnature == null)     // Disabilitate in attesa di edizione e segnatura
-            //    this.tbSegnatura.Text = _label.Segnatura.ToString();
-
-            if (label.Segnatura.Contains("-"))
-            {
-                string[] segnature = label.Segnatura.Split('-');
-
-                for (int i = 0; i < segnature.Length; i++)
-                {
-                    label.Segnatura = segnature[i];
-                    this.tbSegnatura.Text = label.Segnatura.ToString();
-                    this.tbSegnatura.UpdateLayout();
-
-                    Print(this, ipStampante, copyNumber);
-                }
-            }
-            else
-            {
-                Print(this, ipStampante, copyNumber);
-            }
+            Print(this, ipStampante, copyNumber);
         }
 
         private string ToString(NiceLabel label)
@@ -292,23 +194,16 @@ namespace PrintLabel
                 case "mBR02":
                     reparto = "BR";
                     break;
-                case "mCA01":
+                case "mCA09":
+                case "mCA10":
                     reparto = "CO";
                     break;
+                case "mCA01":
                 case "mCA02":
-                    reparto = "TT";
-                    break;
                 case "mCA03":
-                    reparto = "TC";
-                    break;
-                case "mCA04":
-                    reparto = "BR";
-                    break;
-                case "mCA05":
-                    reparto = "CA";
-                    break;
                 case "mCA08":
-                    reparto = "TR";
+                case "mCA11":
+                    reparto = "CA";
                     break;
                 case "mCU01":
                     reparto = "CU";
@@ -432,7 +327,7 @@ namespace PrintLabel
             string defaultPrinter = settings.PrinterName;
             
             if (System.Environment.MachineName == "CARAC-DELL")
-                destinationPrinter = "192.168.172.200";
+                destinationPrinter = "192.168.172.220";
 
             try
             {

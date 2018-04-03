@@ -1,17 +1,9 @@
 ﻿using log4net;
 using PrintLabel.WcfService;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
 using System.ServiceModel;
-using System.ServiceModel.Description;
 using System.ServiceProcess;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace PrintLabel
 {
@@ -20,6 +12,8 @@ namespace PrintLabel
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         Thread _threadOnStart;
         ServiceHost _svcWcfHost = null;
+        System.Timers.Timer _timerGarbage;
+        const int _timerInterval = 21600000;    // 6 Ore
 
         public Scheduler()
         {
@@ -56,7 +50,17 @@ namespace PrintLabel
             _threadOnStart.IsBackground = false;
             _threadOnStart.Start();
 
+            _timerGarbage = new System.Timers.Timer();
+            _timerGarbage.Interval = _timerInterval;
+            _timerGarbage.Elapsed += _timerGarbage_Elapsed;
+            _timerGarbage.Enabled = true;
+
             log.Info("Servizio partito....");
+        }
+
+        private void _timerGarbage_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            GC.Collect();
         }
 
         private void StartThread()
