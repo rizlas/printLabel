@@ -42,10 +42,10 @@
             <Label x:Name="lblBarCode" ContentStringFormat="(02){0}" Content="Lorem Ipsum" Margin="25,1086,0,24.4" FontFamily="Arial" FontWeight="Bold" VerticalAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Width="332"/>
 
             <BarcodeWpf:BarcodeBlock x:Name="qrCode" HorizontalAlignment="Left" Height="90" Margin="266,996,0,0" VerticalAlignment="Top" Width="90" Symbology="CodeQr" Code="1431-1.16|mPI01|1234;5678;9012|3|SSCCCODE" Visibility="Hidden"/>
-            <Canvas x:Name="cSimboloCopieScelte" HorizontalAlignment="Left" Height="100" Margin="135,390,0,0" VerticalAlignment="Top" Width="100" Visibility="Hidden">
-                <Polygon Points="0,15 100,15 100,85 0,85" Fill="Black" Width="100" Height="100"/>
+            <Canvas x:Name="cSimboloCopieScelte" Height="125" Margin="25,982,19.6,0" VerticalAlignment="Top" Visibility="Hidden">
+                <Polygon Points="0,15 333,15 333,110 0,110" Fill="Black" Width="333" Height="125"/>
                 <!--Square-->
-                <Label x:Name="lblCopieScelte" Content="CS" Foreground="White" Width="100" Height="100" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontFamily="Arial" FontSize="55" />
+                <Label x:Name="lblCopieScelte" Content="CS" Foreground="White" Width="333" Height="125" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontFamily="Arial" FontSize="100" />
             </Canvas>
             <Canvas x:Name="cSimbolo" HorizontalAlignment="Left" Height="100" Margin="252,390,0,0" VerticalAlignment="Top" Width="100">
                 <!--<Polygon Points="0,0 100,0 100,100 0,100" Fill="Black" Width="100" Height="100"/>-->

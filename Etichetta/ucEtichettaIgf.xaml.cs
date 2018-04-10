@@ -49,9 +49,6 @@ namespace PrintLabel
         
         public EtichettaIgf(NiceLabel label, bool copieScelte, int copyNumber, string ipStampante, string tipologia) : this()
         {
-            if (copieScelte)
-                this.cSimboloCopieScelte.Visibility = Visibility.Visible;
-
             string reparto = ImpostaReparto(label.Macchina);
 
             if (reparto != "AI")
@@ -72,6 +69,8 @@ namespace PrintLabel
             }
             else
             {
+                this.cSimboloCopieScelte.Visibility = Visibility.Visible;
+
                 this.tbCopieBancale.Visibility = Visibility.Hidden;
                 this.lblCopieBancale.Visibility = Visibility.Hidden;
 
@@ -81,7 +80,7 @@ namespace PrintLabel
                 this.tbBancale.Visibility = Visibility.Hidden;
                 this.lblBancale.Visibility = Visibility.Hidden;
             }
-
+            
             this.tbEdizione.Text = label.Edizione.ToString().ToUpper();
             this.tbMacchina.Text = label.Macchina;
             this.txtOperatori.Text = " " + label.Presenti.TrimEnd(',', ' ');
