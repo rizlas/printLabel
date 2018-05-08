@@ -64,8 +64,15 @@ namespace PrintLabel
             if (!copieScelte)
             {
                 this.tbCopieBancale.Text = label.QuantitaSuBancale.ToString();
-                this.barCodeCommessa.Code = $"(02){label.Commessa}-{label.ID}";
+                this.barCodeCommessa.Code = $"(02){label.ID}";//$"(02){label.Commessa}-{label.ID}";
                 //this.tbBancale.Text = _label.Bancale.ToString();      // Disabilitate in attesa di edizione e segnatura
+
+                if (label.Macchina.Contains("PI"))
+                {
+                    this.tbBancale.Visibility = Visibility.Hidden;
+                    this.lblBancale.Visibility = Visibility.Hidden;
+                    this.txtDescLavorazione.FontSize = 20;
+                }
             }
             else
             {
@@ -90,7 +97,7 @@ namespace PrintLabel
                 label.DescLavorazione = ".";
             }
 
-            this.txtImpSegnatura.Text = " " + label.DescLavorazione;
+            this.txtDescLavorazione.Text = $" {label.DescLavorazione}";
 
             //log.Info(this.ToString(label));
 
@@ -118,7 +125,7 @@ namespace PrintLabel
                 tbTipologia.Visibility = Visibility.Hidden;
             }
 
-            this.lblBarCode.Content = $"{label.Commessa}-{label.ID}";
+            this.lblBarCode.Content = $"{label.ID}";//$"{label.Commessa}-{label.ID}";
             //this.qrCode.Code = ImpostaQRCode();
 
             Print(this, ipStampante, copyNumber);
