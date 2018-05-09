@@ -19,7 +19,7 @@ namespace PrintLabel.WcfService
         {
             EtichettaIgf et = null;
             log.Debug("Print(string errore, string text)");
-            
+
             Thread Etichetta = new Thread(() =>
             {
                 try
@@ -38,11 +38,20 @@ namespace PrintLabel.WcfService
             Etichetta.Join(_threadTimeout);
 
             if (et.Exception == string.Empty)
+            {
+                et = null;
                 return HttpStatusCode.Created;
+            }
             else if (et == null || et.Exception != string.Empty)
+            {
+                et = null;
                 return HttpStatusCode.InternalServerError;
+            }
             else
+            {
+                et = null;
                 return HttpStatusCode.NoContent;
+            }
         }
 
         HttpStatusCode IPrintService.Print(string labelJson, bool copieScelte, int copyNumber, string ipStampante, string tipologia)
@@ -73,11 +82,23 @@ namespace PrintLabel.WcfService
             Etichetta.Join(_threadTimeout);
 
             if (et.Exception == string.Empty)
+            {
+                et = null;
+                label = null;
                 return HttpStatusCode.Created;
+            }
             else if (et == null || et.Exception != string.Empty)
+            {
+                et = null;
+                label = null;
                 return HttpStatusCode.InternalServerError;
+            }
             else
+            {
+                et = null;
+                label = null;
                 return HttpStatusCode.NoContent;
+            }
         }
 
         HttpStatusCode IPrintService.Print(string labelJson, bool copieScelte, bool ristampa, int copyNumber, string ipStampante, string tipologia)
@@ -108,11 +129,23 @@ namespace PrintLabel.WcfService
             Etichetta.Join(_threadTimeout);
 
             if (et.Exception == string.Empty)
+            {
+                et = null;
+                label = null;
                 return HttpStatusCode.Created;
+            }
             else if (et == null || et.Exception != string.Empty)
+            {
+                et = null;
+                label = null;
                 return HttpStatusCode.InternalServerError;
+            }
             else
+            {
+                et = null;
+                label = null;
                 return HttpStatusCode.NoContent;
+            }
         }
     }
 }

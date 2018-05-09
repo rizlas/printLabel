@@ -27,7 +27,15 @@ namespace PrintLabel
                 _exception = value;
             }
         }
-        
+
+        private const double _FontSizeDescLavorazione = 30;
+        private const double _HeightLabelReparto = 100;
+        private const double _WidthLabelReparto = 100;
+        private const double _HeightForme = 100;
+        private const double _WidthForme = 100;
+        private const double _FontSizeLabelReparto = 32;
+        private const string _FontFamilyLabelReparto = "Arial";
+
         public EtichettaIgf()
         {
             InitializeComponent();
@@ -71,7 +79,6 @@ namespace PrintLabel
                 {
                     this.tbBancale.Visibility = Visibility.Hidden;
                     this.lblBancale.Visibility = Visibility.Hidden;
-                    this.txtDescLavorazione.FontSize = 20;
                 }
             }
             else
@@ -97,7 +104,15 @@ namespace PrintLabel
                 label.DescLavorazione = ".";
             }
 
-            this.txtDescLavorazione.Text = $" {label.DescLavorazione}";
+            if (!label.DescLavorazione.ToLower().Contains("risguardi"))
+            {
+                this.txtDescLavorazione.Text = $" {label.DescLavorazione}";
+            }
+            else
+            {
+                this.txtDescLavorazione.FontSize = _FontSizeDescLavorazione;
+                this.txtDescLavorazione.Text = " Risguardi";
+            }
 
             //log.Info(this.ToString(label));
 
@@ -202,14 +217,14 @@ namespace PrintLabel
                     break;
                 case "mCA09":
                 case "mCA10":
-                    reparto = "CO";
+                    reparto = "CA";
                     break;
                 case "mCA01":
                 case "mCA02":
                 case "mCA03":
                 case "mCA08":
                 case "mCA11":
-                    reparto = "CA";
+                    reparto = "CO";
                     break;
                 case "mCU01":
                     reparto = "CU";
@@ -239,18 +254,20 @@ namespace PrintLabel
 
         private Label LabelReparto(string reparto)
         {
-            Label myLabel = new Label();
-            myLabel.Name = "lblReparto";
-            myLabel.Content = reparto;
-            myLabel.Foreground = new SolidColorBrush(Colors.White);
-            myLabel.Height = 100;
-            myLabel.Width = 100;
-            myLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            myLabel.VerticalAlignment = VerticalAlignment.Center;
-            myLabel.HorizontalContentAlignment = HorizontalAlignment.Center;
-            myLabel.VerticalContentAlignment = VerticalAlignment.Center;
-            myLabel.FontFamily = new FontFamily("Arial");
-            myLabel.FontSize = 32;
+            Label myLabel = new Label
+            {
+                Name = "lblReparto",
+                Content = reparto,
+                Foreground = new SolidColorBrush(Colors.White),
+                Height = _HeightLabelReparto,
+                Width = _WidthLabelReparto,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                FontFamily = new FontFamily(_FontFamilyLabelReparto),
+                FontSize = _FontSizeLabelReparto
+            };
 
             return myLabel;
         }
@@ -258,20 +275,24 @@ namespace PrintLabel
         //Reparto AI
         private Ellipse CreaCerchio()
         {
-            Ellipse e = new Ellipse();
-            e.Fill = Brushes.Black;
-            e.Height = 100;
-            e.Width = 100;
+            Ellipse e = new Ellipse
+            {
+                Fill = Brushes.Black,
+                Height = _HeightForme,
+                Width = _WidthForme
+            };
 
             return e;
         }
 
         private Polygon CreaPoligono(string reparto)
         {
-            Polygon poligono = new Polygon();
-            poligono.Fill = Brushes.Black;
-            poligono.Width = 100;
-            poligono.Height = 100;
+            Polygon poligono = new Polygon
+            {
+                Fill = Brushes.Black,
+                Width = _WidthForme,
+                Height = _HeightForme
+            };
 
             PointCollection pc = null;
 
