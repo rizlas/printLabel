@@ -13,7 +13,7 @@ namespace PrintLabel
         Thread _threadOnStart;
         ServiceHost _svcWcfHost = null;
         System.Timers.Timer _timerGarbage;
-        const int _timerInterval = 21600000;    // 6 Ore
+        const int _timerInterval = 10800000;    // 3 Ore
 
         public Scheduler()
         {
@@ -54,6 +54,7 @@ namespace PrintLabel
             _timerGarbage.Interval = _timerInterval;
             _timerGarbage.Elapsed += _timerGarbage_Elapsed;
             _timerGarbage.Enabled = true;
+            _timerGarbage.Start();
 
             log.Info("Servizio partito....");
         }
@@ -61,6 +62,7 @@ namespace PrintLabel
         private void _timerGarbage_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             GC.Collect();
+            log.Info("Garbage collection");
         }
 
         private void StartThread()
